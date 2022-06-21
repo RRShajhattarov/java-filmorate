@@ -18,10 +18,9 @@ public class Film {
     private String description;
     @Past(message = "Некорректная дата релиза")
     private LocalDate releaseDate;
-    @Positive(message = "Продолжительность не может быть отрицательной!")
-    private Duration duration;
+    private long duration;
 
-    public Film(int id, String name, String description, LocalDate releaseDate, Duration duration) {
+    public Film(int id, String name, String description, LocalDate releaseDate, long duration) {
         this.id = id;
         this.name = name;
         this.description = description;

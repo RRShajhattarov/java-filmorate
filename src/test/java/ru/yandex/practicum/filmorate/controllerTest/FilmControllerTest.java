@@ -22,13 +22,14 @@ public class FilmControllerTest {
         LocalDate releaseDate;
         Film film1;
 
-        Duration duration1;
+        long duration1;
 
         @Autowired
         FilmController filmController;
 
         @BeforeEach
         void beforeEach() {
+            duration1 = 100;
             releaseDate = LocalDate.of(1900, 1, 1);
             film1 = new Film(1,"name", "logi n sdad",  releaseDate, duration1);
         }

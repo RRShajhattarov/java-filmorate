@@ -3,50 +3,66 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.util.ValidationException;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
 public class UserController {
-    private List<User> users = new ArrayList<User>();
+    private HashMap<Integer, User> users = new HashMap<>();
     public static Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @GetMapping("/users")
-    public List<User> findAll() {
+    public Collection<User> findAll() {
         log.debug("Текущее количество юзеров: {}", users.size());
-        return users;
+        return users.values();
     }
 
-    @PostMapping("/user")
-    public void create(@Valid @RequestBody User user) throws ValidationException {
-        if (user.getLogin().contains(" ")) {
+    @PostMapping("/users")
+    public @Valid User create(@Valid @RequestBody User user) throws ValidationException {
+        if (user.getLogin().contains(" ") ) {
             throw new ValidationException("Некорректные данные! Проверьте логин или email");
+        }
+        if(user.getId() < 0) {
+            throw new RuntimeException("Id не может быть отрицательный!");
         }
         if (user.getName().isEmpty() || user.getName() == null) {
             user.setName(user.getLogin());
         }
         log.debug("Добавлен пользователь с логином: {}", user.getLogin());
-        users.add(user);
+
+
+        if(user.getId() == 0) {
+            user.setId(users.size()+1);
+            users.put(user.getId(), user);
+        }
+        else {
+            users.put(user.getId(), user);
+        }
+        return user;
     }
 
 
-    @PutMapping("/user/put")
-    public void put(@Valid  @RequestBody User user) throws ValidationException {
+    @PutMapping("/users")
+    public @Valid User put(@Valid  @RequestBody User user) throws ValidationException {
         if(user.getLogin().contains(" ")) {
             throw new ValidationException("Некорректные данные! Логин содержит пробелы");
+        }
+        if(user.getId() <= 0) {
+            throw new RuntimeException("Id не может быть отрицательный!");
         }
         if (user.getName().isEmpty() || user.getName() == null) {
             user.setName(user.getLogin());
         }
         log.debug("Изменен пользователь с логином: {}", user.getLogin());
-        users.add(user);
+
+        users.put(user.getId(),user);
+        return user;
     }
 
 }
