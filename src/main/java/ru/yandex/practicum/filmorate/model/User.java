@@ -3,10 +3,7 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
@@ -16,6 +13,7 @@ public class User {
     @Email(message = "Некоррктный email!")
     private String email;
     @NotBlank(message = "Логин не может быть пустым!")
+    @Pattern(regexp = "^\\S*$")
     private String login;
     private String name;
     @Past(message = "Дата рождения не может быть в будущем!")

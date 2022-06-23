@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -12,18 +13,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+@Slf4j
 @RestController
+@RequestMapping("/users")
 public class UserController {
     private HashMap<Integer, User> users = new HashMap<>();
-    public static Logger log = LoggerFactory.getLogger(FilmController.class);
 
-    @GetMapping("/users")
+    @GetMapping
     public Collection<User> findAll() {
         log.debug("Текущее количество юзеров: {}", users.size());
         return users.values();
     }
 
-    @PostMapping("/users")
+    @PostMapping
     public @Valid User create(@Valid @RequestBody User user) throws ValidationException {
         if (user.getLogin().contains(" ") ) {
             throw new ValidationException("Некорректные данные! Проверьте логин или email");
@@ -48,7 +50,7 @@ public class UserController {
     }
 
 
-    @PutMapping("/users")
+    @PutMapping
     public @Valid User put(@Valid  @RequestBody User user) throws ValidationException {
         if(user.getLogin().contains(" ")) {
             throw new ValidationException("Некорректные данные! Логин содержит пробелы");
