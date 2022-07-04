@@ -1,60 +1,64 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.util.ValidationException;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.sortage.FilmStorage;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private HashMap<Integer, Film> films = new HashMap<>();
-    LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
+
+    FilmService filmService;
+    UserService userService;
+    FilmStorage filmStorage;
+    @Autowired
+    public FilmController(FilmService filmService, UserService userService, FilmStorage filmStorage) {
+        this.filmService = filmService;
+        this.userService = userService;
+        this.filmStorage = filmStorage;
+    }
 
     @GetMapping
     public Collection<Film> findAll() {
-        log.debug("Текущее количество фильмов: {}", films.size());
-        return films.values();
+        return filmService.findAll();
     }
 
     @PostMapping
     public @Valid Film create(@Valid @RequestBody Film film) throws ValidationException {
-        if (film.getReleaseDate().isBefore(minReleaseDate) || film.getDuration() < 0) {
-            throw new ValidationException("Некорректные данные! Дата релиза должна быть позднее 28.12.1985 года!");
-        }
-        log.debug("Добавлен фильм: {}", film.getName());
-        if (film.getId() < 0) {
-            throw new RuntimeException("Id не может быть отрицательный!");
-        }
-        if (film.getId() == 0) {
-            film.setId(films.size() + 1);
-            films.put(film.getId(), film);
-        } else {
-            films.put(film.getId(), film);
-        }
-        return film;
+        return filmService.create(film);
     }
-
 
     @PutMapping
     public @Valid Film put(@Valid @RequestBody Film film) throws ValidationException {
-        if (film.getReleaseDate().isBefore(minReleaseDate) || film.getDuration() < 0) {
-            throw new ValidationException("" + "Некорректные данные!");
-        }
-
-        if (film.getId() < 0) {
-            throw new RuntimeException("Id не может быть отрицательный!");
-        }
-        films.put(film.getId(),film);
-        log.debug("Изменен фильм: {}", film.getName());
-        return film;
+        return filmService.put(film);
     }
+
+    @PutMapping("{id}/like/{userId}")
+    public void addLike(@PathVariable Integer id,
+                        @PathVariable Integer userId) throws ValidationException {
+        filmService.addLike(filmService.findById(id), userService.findById(userId));
+    }
+
+    @DeleteMapping("{id}/like/{userId}")
+    public void deleteLike(@PathVariable Integer id,
+                           @PathVariable Integer userId) throws ValidationException {
+    filmService.deleteLike(filmStorage.findFilm(id), userService.findById(userId));
+    }
+
+    @GetMapping("/popular")
+    public Collection<Film> getPopularFilms(
+            @RequestParam(defaultValue = "10",required = false) Integer count
+            ) {
+        return filmService.getPopularFilms(filmStorage.findAll(), count);
+    }
+
 }

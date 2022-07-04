@@ -1,70 +1,68 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.util.ValidationException;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import javax.validation.Valid;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 
-@Slf4j
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private HashMap<Integer, User> users = new HashMap<>();
+    UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+    this.userService = userService;
+    }
 
     @GetMapping
     public Collection<User> findAll() {
-        log.debug("Текущее количество юзеров: {}", users.size());
-        return users.values();
+        return userService.findAll();
     }
 
     @PostMapping
     public @Valid User create(@Valid @RequestBody User user) throws ValidationException {
-        if (user.getLogin().contains(" ") ) {
-            throw new ValidationException("Некорректные данные! Проверьте логин или email");
-        }
-        if(user.getId() < 0) {
-            throw new RuntimeException("Id не может быть отрицательный!");
-        }
-        if (user.getName().isEmpty() || user.getName() == null) {
-            user.setName(user.getLogin());
-        }
-        log.debug("Добавлен пользователь с логином: {}", user.getLogin());
-
-
-        if(user.getId() == 0) {
-            user.setId(users.size()+1);
-            users.put(user.getId(), user);
-        }
-        else {
-            users.put(user.getId(), user);
-        }
-        return user;
+        return userService.create(user);
     }
 
 
     @PutMapping
     public @Valid User put(@Valid  @RequestBody User user) throws ValidationException {
-        if(user.getLogin().contains(" ")) {
-            throw new ValidationException("Некорректные данные! Логин содержит пробелы");
-        }
-        if(user.getId() <= 0) {
-            throw new RuntimeException("Id не может быть отрицательный!");
-        }
-        if (user.getName().isEmpty() || user.getName() == null) {
-            user.setName(user.getLogin());
-        }
-        log.debug("Изменен пользователь с логином: {}", user.getLogin());
+        return userService.put(user);
+    }
 
-        users.put(user.getId(),user);
-        return user;
+    @GetMapping("{id}")
+    public User getByID(@PathVariable Integer id) throws ValidationException {
+        return userService.findById(id);
+    }
+
+    @PutMapping("{id}/friends/{friendId}")
+    public void addFriends(
+            @PathVariable Integer id,
+            @PathVariable Integer friendId
+    ) throws ValidationException {
+        userService.addFriends(userService.findById(id), userService.findById(friendId));
+    }
+
+    @DeleteMapping("{id}/friends/{friendId}")
+    public void deleteFriends(
+            @PathVariable Integer id,
+            @PathVariable Integer friendId
+    ) throws ValidationException {
+        userService.deleteFriends(userService.findById(id), userService.findById(friendId));
+    }
+
+    @GetMapping("{id}/friends")
+    public Collection<User> findAllFriends(
+            @PathVariable Integer id
+    ) throws ValidationException {
+        return userService.findAllFriends(userService.findById(id));
     }
 
 }
