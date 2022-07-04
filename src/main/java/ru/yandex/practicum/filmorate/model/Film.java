@@ -5,6 +5,8 @@ import org.springframework.validation.annotation.Validated;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import javax.validation.constraints.*;
 
 
@@ -19,6 +21,7 @@ public class Film {
     @Past(message = "Некорректная дата релиза")
     private LocalDate releaseDate;
     private long duration;
+    private Set<Integer> likes;
 
     public Film(int id, String name, String description, LocalDate releaseDate, long duration) {
         this.id = id;
@@ -26,5 +29,6 @@ public class Film {
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.likes = new HashSet<>();
     }
 }

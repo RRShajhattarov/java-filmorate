@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.util;
+package ru.yandex.practicum.filmorate.exception;
 
 import java.io.IOException;
 
