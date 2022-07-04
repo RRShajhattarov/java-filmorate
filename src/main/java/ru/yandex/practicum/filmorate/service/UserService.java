@@ -91,5 +91,21 @@ public class UserService {
         return  friends;
     }
 
+    public List<User> commonFriendsList(User user1, User user2) {
+        Set<Integer> setFriendsUser1 = user1.getFriends();
+        Set<Integer> setFriendsUser2 = user2.getFriends();
+
+        List<User> commonFriends = new ArrayList<>();
+
+        for (Integer l : setFriendsUser1) {
+            for (Integer s : setFriendsUser2) {
+                if (l.equals(s)) {
+                    commonFriends.add(userStorage.findUser(l));
+                }
+            }
+        }
+        return commonFriends;
+    }
+
 
 }

@@ -50,7 +50,7 @@ public class FilmService {
 
     public Film findById(Integer id) throws ValidationException {
         if (!filmStorage.findAllId().contains(id)) {
-            throw new FilmNotExistsException("Некорректные данные! Проверьте логин или email");
+            throw new FilmIdNotValidation("Некорректные данные! Проверьте логин или email");
         }
         return filmStorage.findFilm(id);
     }

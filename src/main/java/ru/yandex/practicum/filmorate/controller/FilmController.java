@@ -19,12 +19,10 @@ public class FilmController {
 
     FilmService filmService;
     UserService userService;
-    FilmStorage filmStorage;
     @Autowired
-    public FilmController(FilmService filmService, UserService userService, FilmStorage filmStorage) {
+    public FilmController(FilmService filmService, UserService userService) {
         this.filmService = filmService;
         this.userService = userService;
-        this.filmStorage = filmStorage;
     }
 
     @GetMapping
@@ -51,14 +49,17 @@ public class FilmController {
     @DeleteMapping("{id}/like/{userId}")
     public void deleteLike(@PathVariable Integer id,
                            @PathVariable Integer userId) throws ValidationException {
-    filmService.deleteLike(filmStorage.findFilm(id), userService.findById(userId));
+    filmService.deleteLike(filmService.findById(id), userService.findById(userId));
     }
 
     @GetMapping("/popular")
     public Collection<Film> getPopularFilms(
             @RequestParam(defaultValue = "10",required = false) Integer count
             ) {
-        return filmService.getPopularFilms(filmStorage.findAll(), count);
+        return filmService.getPopularFilms(filmService.findAll(), count);
     }
 
+    @GetMapping("{id}")
+    public Film getFilmById(@PathVariable Integer id) throws ValidationException {
+        return filmService.findById(id);}
 }

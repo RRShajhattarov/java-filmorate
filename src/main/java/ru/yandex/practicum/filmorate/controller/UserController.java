@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.sortage.UserStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 
 
 @RestController
@@ -63,6 +65,12 @@ public class UserController {
             @PathVariable Integer id
     ) throws ValidationException {
         return userService.findAllFriends(userService.findById(id));
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> commonFriends(@PathVariable Integer id,
+                                       @PathVariable Integer otherId) {
+        return userService.commonFriendsList(userService.findById(id),userService.findById(otherId));
     }
 
 }
