@@ -107,5 +107,8 @@ public class UserService {
         return commonFriends;
     }
 
+    public void deleteUser(User user) {
+        userStorage.deleteUser(user);
+    }
 
 }

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.sortage;
 
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
@@ -17,4 +18,6 @@ public interface UserStorage {
     List<Integer> findAllId();
 
     User findUser(Integer friendsId);
+
+    void deleteUser(User user);
 }

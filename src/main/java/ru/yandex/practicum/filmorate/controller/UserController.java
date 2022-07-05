@@ -73,4 +73,9 @@ public class UserController {
         return userService.commonFriendsList(userService.findById(id),userService.findById(otherId));
     }
 
+    @DeleteMapping
+    public @Valid void delete(@Valid  @RequestBody User user) throws ValidationException {
+        userService.deleteUser(user);
+    }
+
 }
