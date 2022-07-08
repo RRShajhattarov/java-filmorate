@@ -62,4 +62,9 @@ public class FilmController {
     @GetMapping("{id}")
     public Film getFilmById(@PathVariable Integer id) throws ValidationException {
         return filmService.findById(id);}
+
+    @DeleteMapping
+    public @Valid void delete(@Valid @RequestBody Film film) throws ValidationException {
+         filmService.DeleteFilm(film);
+    }
 }

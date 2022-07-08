@@ -18,4 +18,6 @@ public interface FilmStorage {
 
     Film findFilm(Integer id);
 
+    void deleteFilm(Film film);
+
 }

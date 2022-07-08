@@ -73,7 +73,9 @@ public class FilmService {
                 .limit(count).collect(Collectors.toList());
     }
 
-
+    public void DeleteFilm(Film film) {
+        filmStorage.deleteFilm(film);
+    }
 
 
 }
