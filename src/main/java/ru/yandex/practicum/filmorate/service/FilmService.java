@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmIdNotValidation;
 import ru.yandex.practicum.filmorate.exception.FilmNotExistsException;
+import ru.yandex.practicum.filmorate.exception.UserIdNotValidation;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.sortage.FilmStorage;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.sortage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -32,7 +34,7 @@ public class FilmService {
         if (film.getReleaseDate().isBefore(minReleaseDate) || film.getDuration() < 0) {
             throw new FilmNotExistsException("Некорректные данные! Дата релиза должна быть позднее 28.12.1985 года!");
         }
-        if (film.getId() < 0) {
+        if (film.getFilmId() < 0) {
             throw new FilmIdNotValidation("Id не может быть отрицательный!");
         }
         return filmStorage.create(film);
@@ -42,39 +44,46 @@ public class FilmService {
         if (film.getReleaseDate().isBefore(minReleaseDate) || film.getDuration() < 0) {
             throw new FilmNotExistsException("" + "Некорректные данные!");
         }
-        if (film.getId() < 0) {
+        if (film.getFilmId() < 0) {
             throw new FilmIdNotValidation("Id не может быть отрицательный!");
         }
         return filmStorage.put(film);
     }
 
     public Film findById(Integer id) throws ValidationException {
-        if (!filmStorage.findAllId().contains(id)) {
-            throw new FilmIdNotValidation("Некорректные данные! Проверьте логин или email");
-        }
+      //  if (!filmStorage.findAllId().contains(id)) {
+     //      throw new FilmIdNotValidation("Некорректные данные! Проверьте логин или email");
+      //  }
         return filmStorage.findFilm(id);
     }
 
     public void addLike(Film film, User user) {
-        Set<Integer> filmLikes = film.getLikes();
-        filmLikes.add(user.getId());
-        film.setLikes(filmLikes);
+        if(user.getUserId() < 0) {
+            throw new UserIdNotValidation("dsad");
+        }
+        if(film.getFilmId() < 0) {
+            throw new FilmIdNotValidation("dsas");
+        }
+
+        filmStorage.addLike(user.getUserId(), film.getFilmId());
     }
 
     public void deleteLike(Film film, User user) {
-        Set<Integer> filmLikes = film.getLikes();
-        filmLikes.remove(user.getId());
-        film.setLikes(filmLikes);
+        if(user.getUserId() < 0) {
+            throw new UserIdNotValidation("dsad");
+        }
+        if(film.getFilmId() < 0) {
+            throw new FilmIdNotValidation("dsas");
+        }
+        filmStorage.deleteLike(user.getUserId(), film.getFilmId());
     }
 
-    public Collection<Film> getPopularFilms(Collection<Film> listFilms, Integer count) {
-        return listFilms.stream()
-                .sorted((o1, o2) -> o2.getLikes().size() - o1.getLikes().size())
-                .limit(count).collect(Collectors.toList());
+    public Collection<Film> getPopularFilms(Integer count) {
+        return filmStorage.getPopularFilms(count);
     }
 
     public void DeleteFilm(Film film) {
-        filmStorage.deleteFilm(film);
+        filmStorage.deleteFilm(film.getFilmId());
     }
 
 

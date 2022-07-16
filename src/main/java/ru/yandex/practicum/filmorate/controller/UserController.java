@@ -75,7 +75,7 @@ public class UserController {
 
     @DeleteMapping
     public @Valid void delete(@Valid  @RequestBody User user) throws ValidationException {
-        userService.deleteUser(user);
+        userService.deleteUser(user.getUserId());
     }
 
 }
