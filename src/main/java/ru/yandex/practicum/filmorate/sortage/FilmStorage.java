@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public interface FilmStorage {
 
-    Collection<Film> findAll();
+    List<Film> findAll();
 
     Film create(Film film) throws ValidationException;
 
@@ -25,11 +25,6 @@ public interface FilmStorage {
 
     void deleteFilm(Integer id);
 
-    void addLike(Integer userId, Integer filmId);
-
-    void deleteLike(Integer userId, Integer filmId);
-
-    Collection<Film> getPopularFilms(Integer count);
 
 
 }

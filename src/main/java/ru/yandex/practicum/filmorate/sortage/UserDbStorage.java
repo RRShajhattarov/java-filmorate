@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class UserDbStorage implements UserStorage {
-    //private final HashMap<Integer, User> users = new HashMap<>();
+
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -53,13 +53,6 @@ public class UserDbStorage implements UserStorage {
                 , user.getUserId());
         return user;
     }
-
-
-    /*public List<Integer> findAllId() {
-
-        String sqlQuery = "SELECT USER_ID FROM users";
-        return new ArrayList<>(jdbcTemplate.query(sqlQuery, new UserRowMapper()));
-        }*/
 
     public User findUser(Integer id) {
         final String sqlQuery = "select * from USERS where USER_ID = ?";
@@ -96,67 +89,5 @@ public class UserDbStorage implements UserStorage {
         user.setUserId(keyHolder.getKey().intValue());
         return user;
     }
-
-
-    public boolean containsUser(Integer id) {
-        if (findUser(id) != null) {
-            return true;
-        } else {
-            log.info("Пользователь с идентификатором {} не найден.", id);
-            throw new UserIdNotValidation(String.format("Пользователь с id %d не существует.", id));
-        }
-    }
-
-    public void addFriend(Integer userId, Integer friendId) {
-        String sqlQuery = "INSERT INTO USER_FRIEND (user_id, friend_id)" +
-                "VALUES (?, ?)";
-        jdbcTemplate.update(sqlQuery,
-                userId,
-                friendId);
-    }
-
-    public void deleteFriends(Integer userId, Integer friendId) {
-        String sqlQuery = "DELETE FROM USER_FRIEND WHERE USER_ID = ? AND FRIEND_ID = ?";
-        jdbcTemplate.update(sqlQuery,
-                userId,
-                friendId);
-    }
-
-    @Override
-    public List<User> findAllFriends(Integer userId) {
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet("SELECT friend_id FROM USER_FRIEND " +
-                "WHERE USER_ID = ?", userId);
-        List<User> friends = new ArrayList<>();
-        while (sqlRowSet.next()) {
-            User friend = findUser(sqlRowSet.getInt("friend_id"));
-            friends.add(friend);
-        }
-        return friends;
-    }
-
-    @Override
-    public List<User> commonFriends(Integer userId, Integer secondUserId) {
-        SqlRowSet sqlRowSetUser = jdbcTemplate.queryForRowSet("SELECT friend_id FROM USER_FRIEND " +
-                "WHERE USER_ID = ?", userId);
-
-        SqlRowSet sqlRowSetSecondUser = jdbcTemplate.queryForRowSet("SELECT friend_id FROM USER_FRIEND " +
-                "WHERE USER_ID = ?", secondUserId);
-
-        List<Integer> friendsUser = new ArrayList<>();
-        List<Integer> friendsSecondUser = new ArrayList<>();
-
-        while (sqlRowSetUser.next()) {
-            friendsUser.add(sqlRowSetUser.getInt("friend_id"));
-        }
-
-        while (sqlRowSetSecondUser.next()) {
-            friendsSecondUser.add(sqlRowSetSecondUser.getInt("friend_id"));
-        }
-
-        friendsUser.retainAll(friendsSecondUser);
-
-        return friendsUser.stream().map(this::findUser).collect(Collectors.toList());
-    }
-
 
 }

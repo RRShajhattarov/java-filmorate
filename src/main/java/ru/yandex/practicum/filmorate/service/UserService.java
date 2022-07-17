@@ -7,6 +7,7 @@ import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserIdNotValidation;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.sortage.UserFriendDbStorage;
 import ru.yandex.practicum.filmorate.sortage.UserStorage;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
@@ -19,11 +20,13 @@ import java.util.Set;
 @Service
 public class UserService {
     UserStorage userStorage;
+    UserFriendDbStorage userFriendDbStorage;
 
 
     @Autowired
-    public UserService (@Qualifier("userDbStorage") UserStorage userStorage) {
+    public UserService (UserStorage userStorage, UserFriendDbStorage userFriendDbStorage) {
         this.userStorage = userStorage;
+        this.userFriendDbStorage = userFriendDbStorage;
     }
 
     public Collection<User> findAll() {
@@ -57,28 +60,25 @@ public class UserService {
     }
 
     public User findById(Integer id) throws UserIdNotValidation {
-        //if (!userStorage.findAllId().contains(id)) {
-      //      throw new UserIdNotValidation("Некорректные данные! Такого id не существует");
-      //  }
         return userStorage.findUser(id);
     }
 
     public void addFriends(User user, User friends) throws ValidationException {
         if(!(findAll().contains(user) && findAll().contains(friends))) {
-            throw new ValidationException("dsadas");
+            throw new ValidationException("Такого пользователя не существует");
         }
-        userStorage.addFriend(user.getUserId(), friends.getUserId());
+        userFriendDbStorage.addFriend(user.getUserId(), friends.getUserId());
     }
 
     public void deleteFriends(User user, User friends) {
-        userStorage.deleteFriends(user.getUserId(), friends.getUserId());
+        userFriendDbStorage.deleteFriends(user.getUserId(), friends.getUserId());
     }
 
     public List<User> findAllFriends(User user) {
         if (user == null) {
-            throw new UserIdNotValidation("se");
+            throw new UserIdNotValidation("Такого пользователя не существует");
         }
-        return userStorage.findAllFriends(user.getUserId());
+        return userFriendDbStorage.findAllFriends(user.getUserId());
 
     }
 
@@ -89,7 +89,7 @@ public class UserService {
         if(user2.getUserId() < 0) {
             throw new UserIdNotValidation("Id не может быть отрицательный!");
         }
-        return userStorage.commonFriends(user1.getUserId(), user2.getUserId());
+        return userFriendDbStorage.commonFriends(user1.getUserId(), user2.getUserId());
     }
 
     public void deleteUser(Integer id) {

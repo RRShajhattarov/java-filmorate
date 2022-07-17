@@ -9,24 +9,28 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.sortage.FilmStorage;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.sortage.LikeFilmDbStorage;
 import ru.yandex.practicum.filmorate.sortage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
     FilmStorage filmStorage;
+    LikeFilmDbStorage likeFilmDbStorage;
     LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
 
     @Autowired
-    public FilmService (FilmStorage filmStorage) {
+    public FilmService (FilmStorage filmStorage, LikeFilmDbStorage likeFilmDbStorage) {
         this.filmStorage = filmStorage;
+        this.likeFilmDbStorage = likeFilmDbStorage;
     }
 
-    public Collection<Film> findAll() {
+    public List<Film> findAll() {
         return filmStorage.findAll();
     }
 
@@ -51,35 +55,32 @@ public class FilmService {
     }
 
     public Film findById(Integer id) throws ValidationException {
-      //  if (!filmStorage.findAllId().contains(id)) {
-     //      throw new FilmIdNotValidation("Некорректные данные! Проверьте логин или email");
-      //  }
         return filmStorage.findFilm(id);
     }
 
     public void addLike(Film film, User user) {
         if(user.getUserId() < 0) {
-            throw new UserIdNotValidation("dsad");
+            throw new UserIdNotValidation("Id не может быть отрицательный!");
         }
         if(film.getFilmId() < 0) {
-            throw new FilmIdNotValidation("dsas");
+            throw new FilmIdNotValidation("Id не может быть отрицательный!");
         }
 
-        filmStorage.addLike(user.getUserId(), film.getFilmId());
+        likeFilmDbStorage.addLike(user.getUserId(), film.getFilmId());
     }
 
     public void deleteLike(Film film, User user) {
         if(user.getUserId() < 0) {
-            throw new UserIdNotValidation("dsad");
+            throw new UserIdNotValidation("Id не может быть отрицательный!");
         }
         if(film.getFilmId() < 0) {
-            throw new FilmIdNotValidation("dsas");
+            throw new FilmIdNotValidation("Id не может быть отрицательный!");
         }
-        filmStorage.deleteLike(user.getUserId(), film.getFilmId());
+        likeFilmDbStorage.deleteLike(user.getUserId(), film.getFilmId());
     }
 
-    public Collection<Film> getPopularFilms(Integer count) {
-        return filmStorage.getPopularFilms(count);
+    public List<Film> getPopularFilms(Integer count) {
+        return likeFilmDbStorage.getPopularFilms(count);
     }
 
     public void DeleteFilm(Film film) {

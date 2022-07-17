@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.mapper.FilmRowMapper;
@@ -22,7 +23,7 @@ import java.util.List;
 
 
 @Slf4j
-@Component
+@Service
 public class FilmDbStorage implements FilmStorage{
 
     private final JdbcTemplate jdbcTemplate;
@@ -34,8 +35,7 @@ public class FilmDbStorage implements FilmStorage{
 
 
     @Override
-    public Collection<Film> findAll() {
-        //log.debug("Текущее количество фильмов: {}", films.size());
+    public List<Film> findAll() {
         String sqlQuery = "select * from FILMS";
         return jdbcTemplate.query(sqlQuery, new FilmRowMapper());
     }
@@ -87,27 +87,6 @@ public class FilmDbStorage implements FilmStorage{
     public void deleteFilm(Integer id) {
         String sqlQuery = "DELETE FROM FILMS WHERE film_id = ?";
         jdbcTemplate.update(sqlQuery, id);
-    }
-
-    @Override
-    public void addLike(Integer userId, Integer filmId) {
-        final String sqlQuery = "INSERT INTO LIKE_FILMS (USER_ID, FILM_ID) values(?, ?)";
-        jdbcTemplate.update(sqlQuery,
-                userId, filmId);
-    }
-
-    @Override
-    public void deleteLike(Integer userId, Integer filmId) {
-        final String sqlQuery = "DELETE FROM LIKE_FILMS where USER_ID = ? AND FILM_ID = ?";
-        jdbcTemplate.update(sqlQuery,
-                userId, filmId);
-    }
-
-    @Override
-    public Collection<Film> getPopularFilms(Integer count) {
-        String sqlQuery = "select FILM_ID, count(USER_ID) as LIKES from LIKE_FILMS " +
-                "GROUP BY FILM_ID ORDER BY LIKES DESC LIMIT ?";
-        return jdbcTemplate.query(sqlQuery, new FilmRowMapper(), count);
     }
 
 
