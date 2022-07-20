@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.LikeFilms;
+
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,9 +24,7 @@ class LikeFilmDbStorageTest {
 
     @Test
     void addLike() {
-    likeFilmDbStorage.addLike(1,1);
-        Film film = filmDbStorage.findFilm(1);
-        assertThat(film.getLikes()).isEqualTo(1);
+        assertTrue(likeFilmDbStorage.addLike(1,1));
     }
 
     @Test
@@ -37,8 +38,8 @@ class LikeFilmDbStorageTest {
 
     @Test
     void getPopularFilms() {
-        Film film = likeFilmDbStorage.getPopularFilms(1).get(0);
+        List<LikeFilms> popularFilms = likeFilmDbStorage.getPopularFilms(1);
 
-        assertThat(film.getLikes()).isEqualTo(1);
+        assertFalse(popularFilms.isEmpty());
     }
 }

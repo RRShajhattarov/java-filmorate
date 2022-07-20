@@ -2,25 +2,18 @@ package ru.yandex.practicum.filmorate.sortage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.relational.core.sql.In;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UserIdNotValidation;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.mapper.UserRowMapper;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -58,7 +51,7 @@ public class UserDbStorage implements UserStorage {
         final String sqlQuery = "select * from USERS where USER_ID = ?";
         final List<User> findUsers = jdbcTemplate.query(sqlQuery,  new UserRowMapper(), id);
         if(findUsers.isEmpty()){
-            throw new UserIdNotValidation(" sdfd");
+            throw new UserIdNotValidation("Некорректный ID");
         }
         return findUsers.get(0);
     }

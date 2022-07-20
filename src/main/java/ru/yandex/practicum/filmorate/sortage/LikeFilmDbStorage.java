@@ -3,10 +3,9 @@ package ru.yandex.practicum.filmorate.sortage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.mapper.FilmRowMapper;
+import ru.yandex.practicum.filmorate.model.LikeFilms;
+import ru.yandex.practicum.filmorate.model.mapper.LikeFilmsRowMapper;
 
-import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -19,10 +18,10 @@ public class LikeFilmDbStorage {
     }
 
 
-    public void addLike(Integer userId, Integer filmId) {
+    public boolean addLike(Integer userId, Integer filmId) {
         final String sqlQuery = "INSERT INTO LIKE_FILMS (USER_ID, FILM_ID) values(?, ?)";
-        jdbcTemplate.update(sqlQuery,
-                userId, filmId);
+        int updatedRows = jdbcTemplate.update(sqlQuery, userId, filmId);
+        return updatedRows > 0;
     }
 
 
@@ -33,9 +32,10 @@ public class LikeFilmDbStorage {
     }
 
 
-    public List<Film> getPopularFilms(Integer count) {
+    public List<LikeFilms> getPopularFilms(Integer count) {
         String sqlQuery = "select FILM_ID, count(USER_ID) as LIKES from LIKE_FILMS " +
                 "GROUP BY FILM_ID ORDER BY LIKES DESC LIMIT ?";
-        return jdbcTemplate.query(sqlQuery, new FilmRowMapper(), count);
+        List<LikeFilms> likeFilms = jdbcTemplate.query(sqlQuery, new LikeFilmsRowMapper(), count);
+        return likeFilms;
     }
 }

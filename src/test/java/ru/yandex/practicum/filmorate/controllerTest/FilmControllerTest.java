@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.exception.FilmNotExistsException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
 
@@ -27,13 +27,13 @@ public class FilmControllerTest {
         @BeforeEach
         void beforeEach() {
             duration1 = 100;
-            releaseDate = LocalDate.of(1900, 1, 1);
+            releaseDate = LocalDate.of(1825, 1, 1);
             film1 = new Film(1,"name", "logi n sdad",  releaseDate, duration1, 4);
         }
 
         @Test
         void createDateReleaseMore1985Years() {
-            ValidationException ex = assertThrows(ValidationException.class,
+            FilmNotExistsException ex = assertThrows(FilmNotExistsException.class,
                     () -> filmController.create(film1));
             assertEquals("Некорректные данные! Дата релиза должна быть позднее 28.12.1985 года!", ex.getMessage());
         }

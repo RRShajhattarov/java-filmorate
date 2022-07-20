@@ -6,17 +6,15 @@ import ru.yandex.practicum.filmorate.exception.FilmIdNotValidation;
 import ru.yandex.practicum.filmorate.exception.FilmNotExistsException;
 import ru.yandex.practicum.filmorate.exception.UserIdNotValidation;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.LikeFilms;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.sortage.FilmStorage;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.sortage.LikeFilmDbStorage;
-import ru.yandex.practicum.filmorate.sortage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
@@ -54,7 +52,7 @@ public class FilmService {
         return filmStorage.put(film);
     }
 
-    public Film findById(Integer id) throws ValidationException {
+    public Film findById(Integer id) {
         return filmStorage.findFilm(id);
     }
 
@@ -80,7 +78,13 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        return likeFilmDbStorage.getPopularFilms(count);
+        List<LikeFilms> popularFilms = likeFilmDbStorage.getPopularFilms(count);
+        List<Film> likeFilmIds = new ArrayList<>();
+        popularFilms.forEach(f -> {
+            Film film = findById(f.getFilmId());
+            likeFilmIds.add(film);
+        });
+        return likeFilmIds;
     }
 
     public void DeleteFilm(Film film) {
