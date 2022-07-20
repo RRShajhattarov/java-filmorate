@@ -2,9 +2,12 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserIdNotValidation;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.sortage.UserFriendDbStorage;
 import ru.yandex.practicum.filmorate.sortage.UserStorage;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
@@ -17,10 +20,13 @@ import java.util.Set;
 @Service
 public class UserService {
     UserStorage userStorage;
+    UserFriendDbStorage userFriendDbStorage;
+
 
     @Autowired
-    public UserService (UserStorage userStorage) {
+    public UserService (UserStorage userStorage, UserFriendDbStorage userFriendDbStorage) {
         this.userStorage = userStorage;
+        this.userFriendDbStorage = userFriendDbStorage;
     }
 
     public Collection<User> findAll() {
@@ -31,7 +37,7 @@ public class UserService {
         if(user.getLogin().contains(" ")) {
             throw new ValidationException("Некорректные данные! Логин содержит пробелы");
         }
-        if(user.getId() <= 0) {
+        if(user.getUserId() <= 0) {
             throw new UserIdNotValidation("Id не может быть отрицательный!");
         }
         if (user.getName().isEmpty() || user.getName() == null) {
@@ -44,7 +50,7 @@ public class UserService {
         if (user.getLogin().contains(" ") ) {
             throw new ValidationException("Некорректные данные! Проверьте логин или email");
         }
-        if(user.getId() < 0) {
+        if(user.getUserId() < 0) {
             throw new UserIdNotValidation("Id не может быть отрицательный!");
         }
         if (user.getName().isEmpty() || user.getName() == null) {
@@ -54,61 +60,40 @@ public class UserService {
     }
 
     public User findById(Integer id) throws UserIdNotValidation {
-        if (!userStorage.findAllId().contains(id)) {
-            throw new UserIdNotValidation("Некорректные данные! Такого id не существует");
-        }
         return userStorage.findUser(id);
     }
 
-    public void addFriends(User user, User friends) {
-
-        Set<Integer> userList = user.getFriends();
-        userList.add(friends.getId());
-        user.setFriends(userList);
-
-        Set<Integer> friendsList = friends.getFriends();
-        friendsList.add(user.getId());
-        friends.setFriends(friendsList);
+    public void addFriends(User user, User friends) throws ValidationException {
+        if(!(findAll().contains(user) && findAll().contains(friends))) {
+            throw new ValidationException("Такого пользователя не существует");
+        }
+        userFriendDbStorage.addFriend(user.getUserId(), friends.getUserId());
     }
 
     public void deleteFriends(User user, User friends) {
-
-        Set<Integer> userList = user.getFriends();
-        userList.remove(friends.getId());
-        user.setFriends(userList);
-
-        Set<Integer> friendsList  = friends.getFriends();
-        friendsList.remove(user.getId());
-        friends.setFriends(friendsList);
+        userFriendDbStorage.deleteFriends(user.getUserId(), friends.getUserId());
     }
 
     public List<User> findAllFriends(User user) {
-        List<User> friends = new ArrayList<>();
-        List<Integer> friendsId = new ArrayList<>(user.getFriends());
-        for (Integer integer : friendsId) {
-            friends.add(userStorage.findUser(integer));
+        if (user == null) {
+            throw new UserIdNotValidation("Такого пользователя не существует");
         }
-        return  friends;
+        return userFriendDbStorage.findAllFriends(user.getUserId());
+
     }
 
     public List<User> commonFriendsList(User user1, User user2) {
-        Set<Integer> setFriendsUser1 = user1.getFriends();
-        Set<Integer> setFriendsUser2 = user2.getFriends();
-
-        List<User> commonFriends = new ArrayList<>();
-
-        for (Integer l : setFriendsUser1) {
-            for (Integer s : setFriendsUser2) {
-                if (l.equals(s)) {
-                    commonFriends.add(userStorage.findUser(l));
-                }
-            }
+        if(user1.getUserId() < 0) {
+            throw new UserIdNotValidation("Id не может быть отрицательный!");
         }
-        return commonFriends;
+        if(user2.getUserId() < 0) {
+            throw new UserIdNotValidation("Id не может быть отрицательный!");
+        }
+        return userFriendDbStorage.commonFriends(user1.getUserId(), user2.getUserId());
     }
 
-    public void deleteUser(User user) {
-        userStorage.deleteUser(user);
+    public void deleteUser(Integer id) {
+        userStorage.deleteUser(id);
     }
 
 }

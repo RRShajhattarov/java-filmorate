@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.sortage;
 
+import org.springframework.data.relational.core.sql.In;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -10,14 +11,9 @@ import java.util.List;
 public interface UserStorage {
 
     Collection<User> findAll();
-
     User put(User user) throws ValidationException;
-
     User create(User user) throws ValidationException;
-
-    List<Integer> findAllId();
-
+    //List<Integer> findAllId();
     User findUser(Integer friendsId);
-
-    void deleteUser(User user);
+    void deleteUser(Integer id);
 }
