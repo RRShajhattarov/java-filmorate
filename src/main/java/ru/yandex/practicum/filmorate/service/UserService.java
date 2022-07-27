@@ -2,19 +2,15 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserIdNotValidation;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.sortage.UserFriendDbStorage;
 import ru.yandex.practicum.filmorate.sortage.UserStorage;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -24,7 +20,7 @@ public class UserService {
 
 
     @Autowired
-    public UserService (UserStorage userStorage, UserFriendDbStorage userFriendDbStorage) {
+    public UserService(UserStorage userStorage, UserFriendDbStorage userFriendDbStorage) {
         this.userStorage = userStorage;
         this.userFriendDbStorage = userFriendDbStorage;
     }

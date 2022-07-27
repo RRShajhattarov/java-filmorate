@@ -7,9 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.validation.constraints.*;
 
 
@@ -31,8 +29,10 @@ public class Film {
     //private Set<Integer> likes;
     private int rate;
     private long likes;
-    private Genre genre;
+    @JsonProperty("genres")
+    private List<Genre> genre;
     @NotNull
+    @JsonProperty("mpa")
     private MpaRating mpa;
 
     public Film(int filmId, String name, String description, LocalDate releaseDate, long duration, int rate,  MpaRating mpa) {

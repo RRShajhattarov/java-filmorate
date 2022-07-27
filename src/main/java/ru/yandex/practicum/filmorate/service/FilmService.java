@@ -5,18 +5,15 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmIdNotValidation;
 import ru.yandex.practicum.filmorate.exception.FilmNotExistsException;
 import ru.yandex.practicum.filmorate.exception.UserIdNotValidation;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.sortage.FilmStorage;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.sortage.LikeFilmDbStorage;
-import ru.yandex.practicum.filmorate.sortage.UserStorage;
+
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
@@ -54,19 +51,22 @@ public class FilmService {
         return filmStorage.put(film);
     }
 
-    public Film findById(Integer id) throws ValidationException {
+    public Film findById(Integer id) {
+        if (id < 0) {
+            throw new FilmIdNotValidation("Id не может быть отрицательный!");
+        }
         return filmStorage.findFilm(id);
     }
 
-    public void addLike(Film film, User user) {
-        if(user.getUserId() < 0) {
+    public void addLike(int filmId, int userId) {
+        if(userId < 0) {
             throw new UserIdNotValidation("Id не может быть отрицательный!");
         }
-        if(film.getFilmId() < 0) {
+        if(filmId < 0) {
             throw new FilmIdNotValidation("Id не может быть отрицательный!");
         }
 
-        likeFilmDbStorage.addLike(user.getUserId(), film.getFilmId());
+        likeFilmDbStorage.addLike(userId, filmId);
     }
 
     public void deleteLike(Film film, User user) {

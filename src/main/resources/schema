@@ -59,6 +59,12 @@ CREATE TABLE if not exists LIKE_FILMS
     film_id int references films (film_id)
 );
 
+CREATE TABLE if not exists MPA_FILMS
+(
+    mpa_id int references MPA_RATING (mpa_id),
+    film_id int references films (film_id)
+);
+
 CREATE TABLE if not exists GENRE
 (
     genre_id   int auto_increment unique,
@@ -83,6 +89,16 @@ MERGE INTO MPA_RATING (MPA_ID, MPA_RATING, DESCRIPTION)
 MERGE INTO MPA_RATING (MPA_ID, MPA_RATING, DESCRIPTION)
     values (5, 'NC-17', 'Лицам до 18 лет просмотр запрещён');
 
-
-
+MERGE INTO GENRE
+    values (1, 'COMEDY');
+MERGE INTO GENRE
+    values (2, 'DRAMA');
+MERGE INTO GENRE
+    values (3, 'CARTOON');
+MERGE INTO GENRE
+    values (4, 'THRILLER');
+MERGE INTO GENRE
+    values (5, 'DOCUMENTARY');
+MERGE INTO GENRE
+    values (6, 'ACTION');
 
