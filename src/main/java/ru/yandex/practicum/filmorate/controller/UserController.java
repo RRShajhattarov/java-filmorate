@@ -4,9 +4,8 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.sortage.UserStorage;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -75,7 +74,7 @@ public class UserController {
 
     @DeleteMapping
     public @Valid void delete(@Valid  @RequestBody User user) throws ValidationException {
-        userService.deleteUser(user);
+        userService.deleteUser(user.getUserId());
     }
 
 }

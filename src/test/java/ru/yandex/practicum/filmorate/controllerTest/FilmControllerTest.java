@@ -28,7 +28,7 @@ public class FilmControllerTest {
         void beforeEach() {
             duration1 = 100;
             releaseDate = LocalDate.of(1900, 1, 1);
-            film1 = new Film(1,"name", "logi n sdad",  releaseDate, duration1);
+            film1 = new Film(1,"name", "logi n sdad",  releaseDate, duration1, 4);
         }
 
         @Test

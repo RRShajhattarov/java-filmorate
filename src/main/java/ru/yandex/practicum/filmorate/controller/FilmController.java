@@ -3,14 +3,13 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.sortage.FilmStorage;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import javax.validation.Valid;
-import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -26,7 +25,7 @@ public class FilmController {
     }
 
     @GetMapping
-    public Collection<Film> findAll() {
+    public List<Film> findAll() {
         return filmService.findAll();
     }
 
@@ -42,8 +41,8 @@ public class FilmController {
 
     @PutMapping("{id}/like/{userId}")
     public void addLike(@PathVariable Integer id,
-                        @PathVariable Integer userId) throws ValidationException {
-        filmService.addLike(filmService.findById(id), userService.findById(userId));
+                        @PathVariable Integer userId) {
+        filmService.addLike(id, userId);
     }
 
     @DeleteMapping("{id}/like/{userId}")
@@ -53,10 +52,10 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(
+    public List<Film> getPopularFilms(
             @RequestParam(defaultValue = "10",required = false) Integer count
             ) {
-        return filmService.getPopularFilms(filmService.findAll(), count);
+        return filmService.getPopularFilms(count);
     }
 
     @GetMapping("{id}")
