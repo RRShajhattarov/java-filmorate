@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.yandex.practicum.filmorate.exception.UserIdNotValidation;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -61,18 +62,13 @@ class UserDbStorageTest {
     void findUser() {
         User user = userStorage.findUser(1);
 
-        assertThat(user).hasFieldOrPropertyWithValue("user_id", 1);
+        assertThat(user).hasFieldOrPropertyWithValue("userId", 1);
 
     }
 
     @Test
     void deleteUser() {
         userStorage.deleteUser(3);
-
-        User user = userStorage.findUser(3);
-
-        assertThat(user).isNull();
+        assertThrows(UserIdNotValidation.class ,() -> userStorage.findUser(3));
     }
-
-
 }

@@ -5,15 +5,16 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmIdNotValidation;
 import ru.yandex.practicum.filmorate.exception.FilmNotExistsException;
 import ru.yandex.practicum.filmorate.exception.UserIdNotValidation;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.sortage.FilmStorage;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.sortage.LikeFilmDbStorage;
 
-
 import java.time.LocalDate;
+
 import java.util.List;
+
 
 @Service
 public class FilmService {

@@ -2,15 +2,14 @@ package ru.yandex.practicum.filmorate.sortage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.MpaRating;
-import ru.yandex.practicum.filmorate.model.MpaRatingEnum;
 import ru.yandex.practicum.filmorate.model.mapper.FilmRowMapper;
 
+import java.util.Collection;
 import java.util.List;
 
-@Service
+@Component
 public class LikeFilmDbStorage {
     @Autowired
     private JdbcTemplate jdbcTemplate;

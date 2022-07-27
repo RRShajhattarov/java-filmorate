@@ -22,7 +22,7 @@ class FilmDbStorageTest {
     void findAll() {
         List<Film> films = filmDbStorage.findAll();
 
-        assertThat(films.size()).isEqualTo(2);
+        assertFalse(films.isEmpty());
     }
 
     @Test
@@ -42,7 +42,7 @@ class FilmDbStorageTest {
 
         filmDbStorage.create(film);
 
-        assertThat(film).hasFieldOrPropertyWithValue("film_id", 2L);
+        assertThat(film).hasFieldOrPropertyWithValue("filmId", 2);
     }
 
     @Test
@@ -70,7 +70,7 @@ class FilmDbStorageTest {
     void findFilm() {
         Film film = filmDbStorage.findFilm(1);
 
-        assertThat(film).hasFieldOrPropertyWithValue("film_id", 1);
+        assertThat(film).hasFieldOrPropertyWithValue("filmId", 1);
     }
 
     @Test

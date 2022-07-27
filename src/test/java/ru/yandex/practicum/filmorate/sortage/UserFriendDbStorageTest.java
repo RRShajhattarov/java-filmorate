@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.relational.core.sql.In;
+import ru.yandex.practicum.filmorate.model.User;
+
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,8 +29,8 @@ class UserFriendDbStorageTest {
     @Test
     public void findAllFriends() {
         userFriendDbStorage.addFriend(1, 2);
-        Integer friendsList = userFriendDbStorage.findAllFriends(1).size();
-        assertThat(friendsList).isEqualTo(1);
+        List<User> allFriends = userFriendDbStorage.findAllFriends(1);
+        assertFalse(allFriends.isEmpty());
     }
 
     @Test
